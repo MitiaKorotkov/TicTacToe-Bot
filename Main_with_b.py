@@ -1,5 +1,6 @@
 import pygame
 from Classes import *
+import Bot
 
 def main():
     global d, number_of_cells, boardsize, screen, clock, data,\
@@ -76,27 +77,29 @@ def start():
     while True:
         for i in pygame.event.get():
             if i.type == pygame.QUIT:
-                print(data)
                 exit()
-            if check == 2:
-                bot(data)
-                obj = Dot(chip_size, blue)
-                data[bot_x][bot_y]=check
-                obj.x = (bot_x - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
-                obj.y = (bot_y - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
             if i.type == pygame.MOUSEBUTTONDOWN:
                 click_x = 10 + ((i.pos[0] - board.x) // (boardsize / number_of_cells))
                 click_y = 10 + ((i.pos[1] - board.y) // (boardsize / number_of_cells))
                 if i.button == 1 and 100 < i.pos[0] < (100 + boardsize) and 100 < i.pos[1] < (100 + boardsize) and \
                         data[int(click_x)][int(click_y)] == 0 and win_trigger == 0:
-                    if check == 1:
-                        obj = Cross(chip_size, red)
-                        data[int(click_x)][int(click_y)] = check
-                        check = 2
+                    obj = Cross(chip_size, red)
+                    data[int(click_x)][int(click_y)] = check
+                    check = -1
                     obj.x = (click_x - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
                     obj.y = (click_y - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
                     obj.draw(screen)
                     win_check(data, int(click_x), int(click_y), -check)
+                    obj = Dot(chip_size, blue)
+                    mas = Bot.bot(data)
+                    bot_x = mas[0]
+                    bot_y = mas[1]
+                    data[bot_x][bot_y] = check
+                    check = 1
+                    obj.x = (bot_x - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
+                    obj.y = (bot_y - 10) * (boardsize / number_of_cells) + (boardsize / number_of_cells) / 2 + 100
+                    obj.draw(screen)
+                    win_check(data, bot_x, bot_y, -check)
         pygame.display.update()
         clock.tick(60)
 
